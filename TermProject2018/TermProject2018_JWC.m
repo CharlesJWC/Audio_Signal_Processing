@@ -1,19 +1,18 @@
 % Audio Signal Processing Term Project
-% 12131448 ÃÖÁß¿ø
 clc; close all; clear;
 
-[C3_h, Fs] = audioread('C3.wav', [42000 100000]);  % C3 ºÒ·¯¿À±â
+[C3_h, Fs] = audioread('C3.wav', [42000 100000]);  % C3 ë¶ˆëŸ¬ì˜¤ê¸°
 disp("Sampling rate : "+Fs)
-C3_h = pvoc(C3_h, 6/5); % ±âÁØÀ½ Time Scaling
+C3_h = pvoc(C3_h, 6/5); % ê¸°ì¤€ìŒ Time Scaling
 %plot(C3_h)
 soundsc(C3_h, Fs)
 %% Problem 1 : Generate D3, E3, F3 ,G3 nodes and save as .wav format 
 
 % Half note 
-D3_h = resample(pvoc(C3_h, 8/9), 8, 9); % ¡Ú
-E3_h = resample(pvoc(C3_h, 4/5), 4, 5); % ¡Ú
-F3_h = resample(pvoc(C3_h, 3/4), 3, 4); % ¡Ú
-G3_h = resample(pvoc(C3_h, 2/3), 2, 3); % ¡Ú
+D3_h = resample(pvoc(C3_h, 8/9), 8, 9); % â˜…
+E3_h = resample(pvoc(C3_h, 4/5), 4, 5); % â˜…
+F3_h = resample(pvoc(C3_h, 3/4), 3, 4); % â˜…
+G3_h = resample(pvoc(C3_h, 2/3), 2, 3); % â˜…
 A3_h = resample(pvoc(C3_h, 3/5), 3, 5);
 B3_h = resample(pvoc(C3_h, 8/15), 8, 15);
 
@@ -69,11 +68,11 @@ audiowrite('G3.wav', G3_h, Fs);
 
 disp("Notes generation complete!")
 %% Bonus comparison : direct vs bypass 
-C4_direct = resample(pvoc(C3_h, 1/2), 1, 2); % ¡Ú
-C4_bypass = resample(pvoc(G3_h, 3/4), 3, 4); % ¡Ú
+C4_direct = resample(pvoc(C3_h, 1/2), 1, 2); % â˜…
+C4_bypass = resample(pvoc(G3_h, 3/4), 3, 4); % â˜…
 
-D4_fromC4 = resample(pvoc(C4_h, 8/9), 8, 9); % ¡Ú
-D4_fromD3 = resample(pvoc(D3_h, 1/2), 1, 2); % ¡Ú
+D4_fromC4 = resample(pvoc(C4_h, 8/9), 8, 9); % â˜…
+D4_fromD3 = resample(pvoc(D3_h, 1/2), 1, 2); % â˜…
 
 soundsc(C3_h, Fs) % reference
 pause(3);
@@ -87,7 +86,7 @@ soundsc(D4_fromD3, Fs)
 
 %% Problem 2 : Generate Twinkle Twinkle Little Star
 
-% µµ ·¹ ¹Ì ÆÄ ¼Ö ¶ó ½Ã µµ
+% ë„ ë ˆ ë¯¸ íŒŒ ì†” ë¼ ì‹œ ë„
 %  C  D  E  F  G  A  B  C
 
 TTLS = [nodesum(C4_q,C3_h); nodesum(G4_q,E3_h);
