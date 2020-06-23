@@ -1,30 +1,29 @@
 % Audio Signal Processing HW3
-% 12131448 ÃÖÁß¿ø
 clc; close all; clear;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% HW3-Problem1 : Audio Recoding & Resampling to 16kHz
 
 myrecObj = audiorecorder(48000, 16, 1);
-% 48kHzÀÇ »ùÇÃ¸µ ÁÖÆÄ¼ö·Î ¿Àµğ¿À ½ÅÈ£¸¦ ³ìÀ½ÇÒ °´Ã¼ »ı¼º
+% 48kHzì˜ ìƒ˜í”Œë§ ì£¼íŒŒìˆ˜ë¡œ ì˜¤ë””ì˜¤ ì‹ í˜¸ë¥¼ ë…¹ìŒí•  ê°ì²´ ìƒì„±
 
 disp('RECORD START!');
-recordblocking(myrecObj, 11); % 10ÃÊ°£ ¿Àµğ¿À ½ÅÈ£ ³ìÀ½ (ÃÊ¹İ 1ÃÊ º¸Á¤À§ÇØ 11ÃÊ ¼³Á¤)
+recordblocking(myrecObj, 11); % 10ì´ˆê°„ ì˜¤ë””ì˜¤ ì‹ í˜¸ ë…¹ìŒ (ì´ˆë°˜ 1ì´ˆ ë³´ì •ìœ„í•´ 11ì´ˆ ì„¤ì •)
 disp('RECORD END!');
 
 % P1 continue : Resampling to 16kHz
-audioData_raw = getaudiodata(myrecObj); % °´Ã¼¿¡¼­ ¿Àµğ¿Àµ¥ÀÌÅÍ ÃßÃâ
+audioData_raw = getaudiodata(myrecObj); % ê°ì²´ì—ì„œ ì˜¤ë””ì˜¤ë°ì´í„° ì¶”ì¶œ
 audioData = audioData_raw(length(audioData_raw)*(1/11)+1:end); 
-% ÃÊ¹İ 1ÃÊ ºÎºĞ Á¦°Å (³ëÆ®ºÏ¿¡¼­ Ã³À½ 1ÃÊ°¡ ³ìÀ½µÇÁö ¾Ê¾Ò±â ¶§¹®)
+% ì´ˆë°˜ 1ì´ˆ ë¶€ë¶„ ì œê±° (ë…¸íŠ¸ë¶ì—ì„œ ì²˜ìŒ 1ì´ˆê°€ ë…¹ìŒë˜ì§€ ì•Šì•˜ê¸° ë•Œë¬¸)
 %%
 figure(100); set(100, 'name', 'Audio Data','units','normalized','outerposition', [0 0.5 1 0.5]);
 subplot(2,1,1); plot(audioData); title(['Original Audio Data',' (',num2str(length(audioData)),' samples)']); 
 xlim([0, length(audioData)]); ylim([-1.5,1.5]); 
 
-audioData_16k = resample(audioData, 1, 3); %% 16kHz·Î resampling (48000 * 1/3)
+audioData_16k = resample(audioData, 1, 3); %% 16kHzë¡œ resampling (48000 * 1/3)
 subplot(2,1,2); plot(audioData_16k); title(['16kHz resampled Audio Data',' (',num2str(length(audioData_16k)),' samples)']); 
 xlim([0, length(audioData_16k)]); ylim([-1.5,1.5]); 
 %%
-% ³ìÀ½µÈ À½¼º Àç»ı 
+% ë…¹ìŒëœ ìŒì„± ì¬ìƒ 
 %p = play(myrecObj);
 %sound(audioData, 48000);
 sound(audioData_16k, 16000);
@@ -32,23 +31,23 @@ sound(audioData_16k, 16000);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% HW3-Problem2 : Make LPF filter & audio filtering
 
-n = 7; % ÇÊÅÍ Â÷¼ö;
+n = 7; % í•„í„° ì°¨ìˆ˜;
 fc = 4000; % cut-off frequency
 fs = 16000; % sampling frequency
 
-% Butterworth ÇÊÅÍ (IIR)
+% Butterworth í•„í„° (IIR)
 [b1, a1] = butter(n, fc/(fs/2));
 filtered_bw = filter(b1,a1,audioData_16k);
 
-% Chebyshev Type1 ÇÊÅÍ (IIR)
-Rp = 0.5; % ¸®ÇÃ Çã¿ë dB
+% Chebyshev Type1 í•„í„° (IIR)
+Rp = 0.5; % ë¦¬í”Œ í—ˆìš© dB
 [b2, a2] = cheby1(n, Rp, fc/(fs/2));
 filtered_cb = filter(b2,a2,audioData_16k);
 
-% Parks-McClellan ÇÊÅÍ (FIR)
+% Parks-McClellan í•„í„° (FIR)
 f = [0 0.2 0.3 0.4 fc/(fs/2) 0.6 0.7 1]; % pairs of normalized frequency
 a = [1 1 1 1 0.5 0 0 0]; % pairs of desired amplitudes
-% parameter¸¦ À§¿Í °°ÀÌ ¼³Á¤ÇÒ ¶§ ¸®ÇÃÀÇ ÆøÀÌ ´õ °¨¼Ò 
+% parameterë¥¼ ìœ„ì™€ ê°™ì´ ì„¤ì •í•  ë•Œ ë¦¬í”Œì˜ í­ì´ ë” ê°ì†Œ 
 %f = [0:0.05:0.45, 0.55:0.05:1]; % pairs of normalized frequency
 %a = [ones(1,length(0:0.05:0.45)),zeros(1,length(0.55:0.05:1))]; % pairs of desired amplitudes
 b3 = firpm(n, f, a);
@@ -99,14 +98,14 @@ figure(402); freqz(b2,a2, 1024); title('Chebyshev'); ylim([-400, 50]);
 figure(403); freqz(b3, 1, 1024); title('Parks-McClellan'); ylim([-200, 50]);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% ¿Àµğ¿Àµ¥ÀÌÅÍ ÀúÀå
+%% ì˜¤ë””ì˜¤ë°ì´í„° ì €ì¥
 audiowrite('original.wav', audioData, 48000);
 audiowrite('resampled_16kHz.wav', audioData_16k, 16000);
 audiowrite('butter_filtered.wav', filtered_bw, 16000);
 audiowrite('cheby1_filtered.wav', filtered_cb, 16000);
 audiowrite('firpm_filtered.wav', filtered_pm, 16000);
 
-%% À½¼ºµ¥ÀÌÅÍ reverse Ver. (for fun)
+%% ìŒì„±ë°ì´í„° reverse Ver. (for fun)
 rev_audioData = flipud(audioData);
 figure(500); plot(rev_audioData);
 sound(rev_audioData, 48000);
